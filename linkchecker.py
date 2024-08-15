@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
-
 # Function to check links
 def check_links(url):
     response = requests.get(url)
@@ -16,18 +15,18 @@ def check_links(url):
         link_url = link['href']
         if not link_url.startswith('http'):
             link_url = requests.compat.urljoin(url, link_url)
+
         try:
             link_response = requests.get(link_url)
             if link_response.status_code == 200:
                 results.append({"url": link_url, "status": "works"})
             else:
-                results.append(
-                    {"url": link_url, "status": f"broken - Status Code: {link_response.status_code}"})
+                results.append({"url": link_url, "status": f"broken - Status Code: {link_response.status_code}"})
+        
         except requests.exceptions.RequestException as e:
             results.append({"url": link_url, "status": f"Failed - Error: {e}"})
 
     return results
-
 
 # Define the route for the home page
 @app.route('/', methods=['GET', 'POST'])
@@ -38,7 +37,6 @@ def home():
         if url:
             results = check_links(url)
     return render_template('test.html', results=results)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
